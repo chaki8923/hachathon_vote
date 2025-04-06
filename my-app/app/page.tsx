@@ -1,103 +1,134 @@
 import Image from "next/image";
+import Link from "next/link";
+import { prisma } from "../lib/prisma";
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+async function getProjects() {
+  try {
+    const projects = await prisma.project.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+      take: 3, // Only get 3 projects for the homepage preview
+    });
+    return projects;
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    return [];
+  }
+}
+
+async function getVotingPeriod() {
+  try {
+    const votingPeriod = await prisma.votingPeriod.findFirst({
+      where: { isActive: true },
+    });
+    return votingPeriod;
+  } catch (error) {
+    console.error('Error fetching voting period:', error);
+    return null;
+  }
+}
+
+export default async function Home() {
+  const projects = await getProjects();
+  const votingPeriod = await getVotingPeriod();
+  
+  const now = new Date();
+  const votingActive = votingPeriod && 
+    new Date(votingPeriod.startTime) <= now && 
+    new Date(votingPeriod.endTime) >= now;
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Welcome to Hackathon Vote! Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900 to-violet-800 text-white">
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center mb-16">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
+            ハッカソン投票プラットフォーム
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 text-gray-300">
+            革新的なプロジェクトに投票して、次世代のテクノロジーをサポートしよう
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/projects" 
+              className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-full text-white font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-400/40"
+            >
+              プロジェクト一覧を見る
+            </Link>
+            {votingActive ? (
+              <Link 
+                href="/auth" 
+                className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-full text-white font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-purple-400/40"
+              >
+                投票する
+              </Link>
+            ) : (
+              <button 
+                className="px-6 py-3 bg-gray-500 rounded-full text-white font-semibold cursor-not-allowed opacity-70"
+                disabled
+              >
+                {!votingPeriod 
+                  ? "投票期間は設定されていません" 
+                  : now < new Date(votingPeriod.startTime)
+                    ? "投票はまだ始まっていません"
+                    : "投票期間は終了しました"}
+              </button>
+            )}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        
+        {/* Featured Projects */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold mb-8 text-center">注目のプロジェクト</h2>
+          
+          {projects.length === 0 ? (
+            <div className="text-center py-10 bg-white/10 backdrop-blur-sm rounded-xl">
+              <p className="text-xl text-gray-300">まだプロジェクトがありません。</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {projects.map((project) => (
+                <Link 
+                  key={project.id} 
+                  href={`/projects/${project.id}`}
+                  className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden shadow-xl hover:shadow-cyan-400/20 transition-all transform hover:scale-105 hover:bg-white/15"
+                >
+                  <div className="h-48 bg-gray-800 relative">
+                    {project.imageUrl ? (
+                      <img 
+                        src={project.imageUrl} 
+                        alt={project.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full bg-gradient-to-r from-gray-700 to-gray-800">
+                        <span className="text-gray-400">No image</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
+                    <p className="text-sm text-gray-300 mb-2">Team: {project.teamName}</p>
+                    <p className="text-gray-400 line-clamp-3">{project.description}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+          
+          <div className="text-center mt-8">
+            <Link 
+              href="/projects" 
+              className="inline-block px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-gray-900 rounded-full transition-colors"
+            >
+              すべてのプロジェクトを見る →
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

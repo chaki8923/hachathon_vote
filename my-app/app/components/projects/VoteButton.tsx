@@ -107,9 +107,9 @@ export default function VoteButton({ projectId }: { projectId: string }) {
     return (
       <button
         onClick={() => router.push('/auth')}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full hover:from-cyan-600 hover:to-blue-600 transform hover:scale-105 transition-all shadow-lg hover:shadow-cyan-400/40"
       >
-        Sign in to Vote
+        サインインして投票する
       </button>
     );
   }
@@ -118,17 +118,17 @@ export default function VoteButton({ projectId }: { projectId: string }) {
     <button
       onClick={handleRemoveVote}
       disabled={loading}
-      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+      className="px-6 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all shadow-lg hover:shadow-red-400/40 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {loading ? 'Processing...' : 'Remove Vote'}
+      {loading ? '処理中...' : '投票を取り消す'}
     </button>
   ) : (
     <button
       onClick={handleVote}
       disabled={loading}
-      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+      className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full hover:from-green-600 hover:to-emerald-600 transform hover:scale-105 transition-all shadow-lg hover:shadow-green-400/40 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {loading ? 'Processing...' : 'Vote for this Project'}
+      {loading ? '処理中...' : 'このプロジェクトに投票する'}
     </button>
   );
 }
