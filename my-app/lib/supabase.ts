@@ -14,9 +14,16 @@ export const getSupabase = () => {
     
     if (!supabaseUrl || !supabaseAnonKey) {
       console.warn('Supabase URL or anon key is missing');
+      return null;
     }
     
-    supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    try {
+      new URL(supabaseUrl);
+      supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    } catch (error) {
+      console.error('Invalid Supabase URL:', error);
+      return null;
+    }
   }
   
   return supabaseInstance;
