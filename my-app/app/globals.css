@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --neon-blue: #00f0ff;
+  --neon-pink: #ff00ff;
+  --neon-green: #00ff66;
+  --neon-purple: #9d00ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+.text-neon-blue { color: var(--neon-blue); }
+.text-neon-pink { color: var(--neon-pink); }
+.text-neon-green { color: var(--neon-green); }
+.text-neon-purple { color: var(--neon-purple); }
+.bg-neon-blue { background-color: var(--neon-blue); }
+.bg-neon-pink { background-color: var(--neon-pink); }
+.bg-neon-green { background-color: var(--neon-green); }
+.bg-neon-purple { background-color: var(--neon-purple); }
+
+.shadow-neon {
+  box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+}
+
+.shadow-neon-intense {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.8), 0 0 30px rgba(0, 240, 255, 0.6);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
