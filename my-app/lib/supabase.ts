@@ -1,6 +1,37 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../types/supabase';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+let supabaseInstance: ReturnType<typeof createClient<Database>> | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const getSupabase = () => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  
+  if (!supabaseInstance) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase URL or anon key is missing');
+      return null;
+    }
+    
+    try {
+      if (!/^https?:\/\/.+/.test(supabaseUrl)) {
+        throw new Error('Invalid URL format');
+      }
+      
+      supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    } catch (error) {
+      console.error('Invalid Supabase URL:', error);
+      return null;
+    }
+  }
+  
+  return supabaseInstance;
+};
+
+export const supabase = typeof window !== 'undefined' 
+  ? getSupabase() 
+  : null as unknown as ReturnType<typeof createClient<Database>>;
