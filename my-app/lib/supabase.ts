@@ -18,7 +18,10 @@ export const getSupabase = () => {
     }
     
     try {
-      new URL(supabaseUrl);
+      if (!/^https?:\/\/.+/.test(supabaseUrl)) {
+        throw new Error('Invalid URL format');
+      }
+      
       supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey);
     } catch (error) {
       console.error('Invalid Supabase URL:', error);
