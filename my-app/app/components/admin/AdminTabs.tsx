@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ProjectsTab from './ProjectsTab';
 import VotingPeriodTab from './VotingPeriodTab';
 
