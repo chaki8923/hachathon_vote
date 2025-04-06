@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/prisma';
-import { supabase } from '../../../lib/supabase';
+import { getSupabase } from '../../../lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabase();
+    if (!supabase) {
+      return NextResponse.json(
+        { message: 'Authentication service unavailable' },
+        { status: 503 }
+      );
+    }
+    
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session?.user) {
       return NextResponse.json(
@@ -75,6 +83,14 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = getSupabase();
+    if (!supabase) {
+      return NextResponse.json(
+        { message: 'Authentication service unavailable' },
+        { status: 503 }
+      );
+    }
+    
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session?.user) {
       return NextResponse.json(

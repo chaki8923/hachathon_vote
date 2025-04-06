@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { supabase } from '../../../lib/supabase';
+import { getSupabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
@@ -16,6 +16,9 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkUser = async () => {
+      const supabase = getSupabase();
+      if (!supabase) return;
+      
       const { data } = await supabase.auth.getSession();
       setUser(data.session?.user || null);
       setLoading(false);
@@ -27,25 +30,38 @@ export default function Navbar() {
     
     checkUser();
     
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user || null);
-        if (session?.user) {
-          setIsAdmin(session.user.email?.includes('admin') || false);
-        } else {
-          setIsAdmin(false);
-        }
+    let authListener: { subscription: { unsubscribe: () => void } } | null = null;
+    
+    if (typeof window !== 'undefined') {
+      const supabase = getSupabase();
+      if (supabase) {
+        const { data: listener } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            setUser(session?.user || null);
+            if (session?.user) {
+              setIsAdmin(session.user.email?.includes('admin') || false);
+            } else {
+              setIsAdmin(false);
+            }
+          }
+        );
+        authListener = listener;
       }
-    );
+    }
     
     return () => {
-      authListener.subscription.unsubscribe();
+      if (authListener) {
+        authListener.subscription.unsubscribe();
+      }
     };
   }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
+    const supabase = getSupabase();
+    if (supabase) {
+      await supabase.auth.signOut();
+      router.push('/');
+    }
   };
 
   return (

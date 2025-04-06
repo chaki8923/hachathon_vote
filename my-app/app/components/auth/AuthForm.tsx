@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { supabase } from '../../../lib/supabase';
+import { getSupabase } from '../../../lib/supabase';
 
 export default function AuthForm() {
   const [email, setEmail] = useState('');
@@ -16,6 +16,13 @@ export default function AuthForm() {
     setMessage('');
 
     try {
+      const supabase = getSupabase();
+      if (!supabase) {
+        setMessage('Authentication service is not available. Please try again later.');
+        setLoading(false);
+        return;
+      }
+      
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email,

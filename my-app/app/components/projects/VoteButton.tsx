@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../../lib/supabase';
+import { getSupabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
 
 export default function VoteButton({ projectId }: { projectId: string }) {
@@ -15,6 +15,9 @@ export default function VoteButton({ projectId }: { projectId: string }) {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const supabase = getSupabase();
+      if (!supabase) return;
+      
       const { data } = await supabase.auth.getSession();
       setUser(data.session?.user || null);
       
