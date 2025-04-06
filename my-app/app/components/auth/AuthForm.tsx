@@ -30,8 +30,9 @@ export default function AuthForm() {
         });
         if (error) throw error;
       }
-    } catch (error: any) {
-      setMessage(error.message || 'An error occurred during authentication.');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setMessage(errorMessage || 'An error occurred during authentication.');
     } finally {
       setLoading(false);
     }
