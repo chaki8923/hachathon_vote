@@ -54,76 +54,78 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
     new Date(votingPeriod.endTime) >= now;
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-6">
-        <Link 
-          href="/projects"
-          className="text-blue-600 hover:underline flex items-center"
-        >
-          ← Back to Projects
-        </Link>
-      </div>
-      
-      <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-        {project.imageUrl && (
-          <div className="h-64 md:h-80 bg-gray-200 dark:bg-gray-700">
-            <img 
-              src={project.imageUrl} 
-              alt={project.name} 
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900 to-violet-800 text-white py-16">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="mb-6">
+          <Link 
+            href="/projects"
+            className="text-cyan-400 hover:text-cyan-300 flex items-center transition-colors"
+          >
+            ← プロジェクト一覧に戻る
+          </Link>
+        </div>
         
-        <div className="p-6">
-          <div className="flex justify-between items-start mb-4">
-            <h1 className="text-3xl font-bold">{project.name}</h1>
-            {votingActive && <VoteButton projectId={project.id} />}
-          </div>
-          
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Team</h2>
-            <p className="text-gray-700 dark:text-gray-300">{project.teamName}</p>
-          </div>
-          
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Description</h2>
-            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{project.description}</p>
-          </div>
-          
-          {project.appealPoint && (
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Appeal Points</h2>
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{project.appealPoint}</p>
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden shadow-xl">
+          {project.imageUrl && (
+            <div className="h-64 md:h-80 bg-gray-800">
+              <img 
+                src={project.imageUrl} 
+                alt={project.name} 
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
           
-          {project.demoUrl && (
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Demo</h2>
-              <a 
-                href={project.demoUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                View Demo
-              </a>
+          <div className="p-6">
+            <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
+              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">{project.name}</h1>
+              {votingActive && <VoteButton projectId={project.id} />}
             </div>
-          )}
-          
-          {!votingActive && (
-            <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900 rounded-md">
-              <p className="text-yellow-800 dark:text-yellow-200">
-                {!votingPeriod 
-                  ? "Voting period has not been set up yet." 
-                  : now < new Date(votingPeriod.startTime)
-                    ? `Voting will start on ${new Date(votingPeriod.startTime).toLocaleString()}.`
-                    : `Voting has ended on ${new Date(votingPeriod.endTime).toLocaleString()}.`
-                }
-              </p>
+            
+            <div className="mb-6 bg-white/5 p-4 rounded-lg">
+              <h2 className="text-xl font-semibold mb-2 text-cyan-400">チーム</h2>
+              <p className="text-gray-300">{project.teamName}</p>
             </div>
-          )}
+            
+            <div className="mb-6 bg-white/5 p-4 rounded-lg">
+              <h2 className="text-xl font-semibold mb-2 text-cyan-400">説明</h2>
+              <p className="text-gray-300 whitespace-pre-line">{project.description}</p>
+            </div>
+            
+            {project.appealPoint && (
+              <div className="mb-6 bg-white/5 p-4 rounded-lg">
+                <h2 className="text-xl font-semibold mb-2 text-cyan-400">アピールポイント</h2>
+                <p className="text-gray-300 whitespace-pre-line">{project.appealPoint}</p>
+              </div>
+            )}
+            
+            {project.demoUrl && (
+              <div className="mb-6 bg-white/5 p-4 rounded-lg">
+                <h2 className="text-xl font-semibold mb-2 text-cyan-400">デモ</h2>
+                <a 
+                  href={project.demoUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  デモを見る
+                </a>
+              </div>
+            )}
+            
+            {!votingActive && (
+              <div className="mt-6 p-4 bg-yellow-900/30 backdrop-blur-sm rounded-lg border border-yellow-600/50">
+                <p className="text-yellow-400">
+                  {!votingPeriod 
+                    ? "投票期間はまだ設定されていません。" 
+                    : now < new Date(votingPeriod.startTime)
+                      ? `投票は ${new Date(votingPeriod.startTime).toLocaleString()} から始まります。`
+                      : `投票は ${new Date(votingPeriod.endTime).toLocaleString()} に終了しました。`
+                  }
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
