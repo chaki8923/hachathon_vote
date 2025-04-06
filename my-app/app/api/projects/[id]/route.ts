@@ -19,10 +19,11 @@ export async function GET(
     }
     
     return NextResponse.json(project);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching project:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to fetch project', error: error.message },
+      { message: 'Failed to fetch project', error: errorMessage },
       { status: 500 }
     );
   }
@@ -82,10 +83,11 @@ export async function PUT(
     });
     
     return NextResponse.json(updatedProject);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating project:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to update project', error: error.message },
+      { message: 'Failed to update project', error: errorMessage },
       { status: 500 }
     );
   }
@@ -132,10 +134,11 @@ export async function DELETE(
     });
     
     return NextResponse.json({ message: 'Project deleted successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error deleting project:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to delete project', error: error.message },
+      { message: 'Failed to delete project', error: errorMessage },
       { status: 500 }
     );
   }

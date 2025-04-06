@@ -63,10 +63,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ vote }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating vote:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to create vote', error: error.message },
+      { message: 'Failed to create vote', error: errorMessage },
       { status: 500 }
     );
   }
@@ -119,10 +120,11 @@ export async function DELETE(request: NextRequest) {
     });
 
     return NextResponse.json({ message: 'Vote removed successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error removing vote:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to remove vote', error: error.message },
+      { message: 'Failed to remove vote', error: errorMessage },
       { status: 500 }
     );
   }

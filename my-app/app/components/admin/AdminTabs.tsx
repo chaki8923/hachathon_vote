@@ -4,9 +4,29 @@ import React, { useState } from 'react';
 import ProjectsTab from './ProjectsTab';
 import VotingPeriodTab from './VotingPeriodTab';
 
+type Project = {
+  id: string;
+  name: string;
+  teamName: string;
+  description: string;
+  appealPoint?: string | null;
+  demoUrl?: string | null;
+  imageUrl?: string | null;
+  _count: {
+    votes: number;
+  };
+};
+
+type VotingPeriod = {
+  id: string;
+  startTime: Date;
+  endTime: Date;
+  isActive: boolean;
+};
+
 type AdminTabsProps = {
-  initialProjects: any[];
-  initialVotingPeriod: any;
+  initialProjects: Project[];
+  initialVotingPeriod: VotingPeriod | null;
 };
 
 export default function AdminTabs({ initialProjects, initialVotingPeriod }: AdminTabsProps) {

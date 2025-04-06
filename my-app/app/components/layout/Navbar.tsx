@@ -6,7 +6,10 @@ import { supabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{
+    id: string;
+    email?: string;
+  } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();

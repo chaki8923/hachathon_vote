@@ -19,10 +19,11 @@ export async function GET(
     }
     
     return NextResponse.json(votingPeriod);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching voting period:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to fetch voting period', error: error.message },
+      { message: 'Failed to fetch voting period', error: errorMessage },
       { status: 500 }
     );
   }
@@ -99,10 +100,11 @@ export async function PUT(
     });
     
     return NextResponse.json(updatedVotingPeriod);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating voting period:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to update voting period', error: error.message },
+      { message: 'Failed to update voting period', error: errorMessage },
       { status: 500 }
     );
   }
@@ -145,10 +147,11 @@ export async function DELETE(
     });
     
     return NextResponse.json({ message: 'Voting period deleted successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error deleting voting period:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to delete voting period', error: error.message },
+      { message: 'Failed to delete voting period', error: errorMessage },
       { status: 500 }
     );
   }

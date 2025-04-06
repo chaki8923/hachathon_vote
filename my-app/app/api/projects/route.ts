@@ -11,10 +11,11 @@ export async function GET() {
     });
     
     return NextResponse.json(projects);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching projects:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to fetch projects', error: error.message },
+      { message: 'Failed to fetch projects', error: errorMessage },
       { status: 500 }
     );
   }
@@ -59,10 +60,11 @@ export async function POST(request: NextRequest) {
     });
     
     return NextResponse.json(project, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating project:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { message: 'Failed to create project', error: error.message },
+      { message: 'Failed to create project', error: errorMessage },
       { status: 500 }
     );
   }

@@ -7,7 +7,10 @@ import { useRouter } from 'next/navigation';
 export default function VoteButton({ projectId }: { projectId: string }) {
   const [loading, setLoading] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{
+    id: string;
+    email?: string;
+  } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -55,9 +58,10 @@ export default function VoteButton({ projectId }: { projectId: string }) {
       
       setHasVoted(true);
       router.refresh(); // Refresh the page to update UI
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error voting:', error);
-      alert(error.message || 'An error occurred while voting');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(errorMessage || 'An error occurred while voting');
     } finally {
       setLoading(false);
     }
@@ -87,9 +91,10 @@ export default function VoteButton({ projectId }: { projectId: string }) {
       
       setHasVoted(false);
       router.refresh(); // Refresh the page to update UI
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error removing vote:', error);
-      alert(error.message || 'An error occurred while removing your vote');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(errorMessage || 'An error occurred while removing your vote');
     } finally {
       setLoading(false);
     }
