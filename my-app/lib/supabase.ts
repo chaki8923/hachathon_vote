@@ -1,16 +1,39 @@
 'use client';
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../types/supabase';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key';
+let supabaseInstance: ReturnType<typeof createClient<Database>> | null = null;
 
-let supabase: SupabaseClient | null = null;
-try {
-  supabase = createClient(supabaseUrl, supabaseKey);
-} catch (error) {
-  console.error('Supabase client initialization failed:', error);
-  supabase = null;
-}
+export const getSupabase = () => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  
+  if (!supabaseInstance) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase URL or anon key is missing');
+      return null;
+    }
+    
+    try {
+      if (!/^https?:\/\/.+/.test(supabaseUrl)) {
+        throw new Error('Invalid URL format');
+      }
+      
+      supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    } catch (error) {
+      console.error('Supabase client initialization failed:', error);
+      return null;
+    }
+  }
+  
+  return supabaseInstance;
+};
 
-export { supabase };
+export const supabase = typeof window !== 'undefined' 
+  ? getSupabase() 
+  : null as unknown as ReturnType<typeof createClient<Database>>;
