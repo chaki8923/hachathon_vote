@@ -1,3 +1,5 @@
+'use client';
+
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/supabase';
 
@@ -24,7 +26,7 @@ export const getSupabase = () => {
       
       supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey);
     } catch (error) {
-      console.error('Invalid Supabase URL:', error);
+      console.error('Supabase client initialization failed:', error);
       return null;
     }
   }

@@ -19,39 +19,49 @@ export default function ResultsDisplay({ initialResults }: { initialResults: Pro
     const total = initialResults.reduce((sum, project) => sum + project.voteCount, 0);
     setTotalVotes(total);
 
-    const channel = supabase
-      .channel('votes-channel')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'Vote' },
-        async () => {
-          try {
-            const response = await fetch('/api/results', {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            
-            if (response.ok) {
-              const updatedResults = await response.json();
-              setResults(updatedResults);
-              
-              const newTotal = updatedResults.reduce(
-                (sum: number, project: ProjectResult) => sum + project.voteCount, 
-                0
-              );
-              setTotalVotes(newTotal);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let channel: any;
+    if (supabase) {
+      try {
+        channel = supabase
+          .channel('votes-channel')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'Vote' },
+            async () => {
+              try {
+                const response = await fetch('/api/results', {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                });
+                
+                if (response.ok) {
+                  const updatedResults = await response.json();
+                  setResults(updatedResults);
+                  
+                  const newTotal = updatedResults.reduce(
+                    (sum: number, project: ProjectResult) => sum + project.voteCount, 
+                    0
+                  );
+                  setTotalVotes(newTotal);
+                }
+              } catch (error) {
+                console.error('Error fetching updated results:', error);
+              }
             }
-          } catch (error) {
-            console.error('Error fetching updated results:', error);
-          }
-        }
-      )
-      .subscribe();
+          )
+          .subscribe();
+      } catch (error) {
+        console.error('Error setting up Supabase real-time subscription:', error);
+      }
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (supabase && channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, [initialResults]);
 
