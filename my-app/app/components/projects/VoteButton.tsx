@@ -28,21 +28,11 @@ export default function VoteButton({ projectId }: { projectId: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    const checkIfVoted = async () => {
+    const checkIfVoted = () => {
       try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await ipResponse.json();
-        
-        if (supabase) {
-          const { data, error } = await supabase
-            .from('Vote')
-            .select('*')
-            .eq('ipAddress', ip)
-            .eq('projectId', projectId);
-            
-          if (!error && data && data.length > 0) {
-            setHasVoted(true);
-          }
+        const votedProjects = JSON.parse(localStorage.getItem('votedProjects') || '[]');
+        if (votedProjects.includes(projectId)) {
+          setHasVoted(true);
         }
       } catch (error) {
         console.error('Error checking vote status:', error);
@@ -90,6 +80,12 @@ export default function VoteButton({ projectId }: { projectId: string }) {
         throw new Error(error.message || '投票に失敗しました');
       }
       
+      const votedProjects = JSON.parse(localStorage.getItem('votedProjects') || '[]');
+      if (!votedProjects.includes(projectId)) {
+        votedProjects.push(projectId);
+        localStorage.setItem('votedProjects', JSON.stringify(votedProjects));
+      }
+      
       setHasVoted(true);
       setShowVoteForm(false);
       router.refresh(); // Refresh the page to update UI
@@ -118,6 +114,10 @@ export default function VoteButton({ projectId }: { projectId: string }) {
         const error = await response.json();
         throw new Error(error.message || '投票の取り消しに失敗しました');
       }
+      
+      const votedProjects = JSON.parse(localStorage.getItem('votedProjects') || '[]');
+      const updatedVotedProjects = votedProjects.filter((id: string) => id !== projectId);
+      localStorage.setItem('votedProjects', JSON.stringify(updatedVotedProjects));
       
       setHasVoted(false);
       router.refresh(); // Refresh the page to update UI
