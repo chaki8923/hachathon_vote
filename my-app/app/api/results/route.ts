@@ -79,7 +79,21 @@ export async function GET() {
       };
     });
     
-    const sortedResults = results.sort((a: any, b: any) => b.totalScore - a.totalScore);
+    type ProjectResult = {
+      id: string;
+      name: string;
+      teamName: string;
+      imageUrl: string | null;
+      voteCount: number;
+      planningScore: number;
+      technicalScore: number;
+      uiUxScore: number;
+      processScore: number;
+      aiUtilizationScore: number;
+      totalScore: number;
+    };
+    
+    const sortedResults = results.sort((a: ProjectResult, b: ProjectResult) => b.totalScore - a.totalScore);
 
     return NextResponse.json(sortedResults);
   } catch (error: unknown) {
