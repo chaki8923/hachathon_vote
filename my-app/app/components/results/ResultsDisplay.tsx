@@ -20,10 +20,14 @@ type ProjectResult = {
 export default function ResultsDisplay({ initialResults }: { initialResults: ProjectResult[] }) {
   const [results, setResults] = useState<ProjectResult[]>(initialResults);
   const [totalVotes, setTotalVotes] = useState(0);
+  const [maxVotesPerProject, setMaxVotesPerProject] = useState(0);
 
   useEffect(() => {
     const total = initialResults.reduce((sum, project) => sum + project.voteCount, 0);
     setTotalVotes(total);
+    
+    const maxVotes = Math.max(...initialResults.map(project => project.voteCount || 0), 0);
+    setMaxVotesPerProject(maxVotes);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let channel: any;
@@ -52,6 +56,9 @@ export default function ResultsDisplay({ initialResults }: { initialResults: Pro
                     0
                   );
                   setTotalVotes(newTotal);
+                  
+                  const newMaxVotes = Math.max(...updatedResults.map((project: ProjectResult) => project.voteCount || 0), 0);
+                  setMaxVotesPerProject(newMaxVotes);
                 }
               } catch (error) {
                 console.error('Error fetching updated results:', error);
@@ -133,7 +140,7 @@ export default function ResultsDisplay({ initialResults }: { initialResults: Pro
                 <div className="text-right">
                   <div className="text-3xl font-bold">
                     {project.totalScore?.toFixed(1) || 0}
-                    <span className="text-lg text-gray-500">/25</span>
+                    <span className="text-lg text-gray-500">/{(maxVotesPerProject * 5 * 5).toFixed(0)}</span>
                   </div>
                   <div className="text-sm text-gray-500">
                     {project.voteCount} {project.voteCount === 1 ? '票' : '票'}
@@ -156,13 +163,13 @@ export default function ResultsDisplay({ initialResults }: { initialResults: Pro
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  {renderScoreBar(project.planningScore || 0, 5, '企画力', 'bg-blue-500')}
-                  {renderScoreBar(project.technicalScore || 0, 5, '技術力', 'bg-green-500')}
-                  {renderScoreBar(project.uiUxScore || 0, 5, 'UI/UX', 'bg-purple-500')}
+                  {renderScoreBar(project.planningScore || 0, maxVotesPerProject * 5, '企画力', 'bg-blue-500')}
+                  {renderScoreBar(project.technicalScore || 0, maxVotesPerProject * 5, '技術力', 'bg-green-500')}
+                  {renderScoreBar(project.uiUxScore || 0, maxVotesPerProject * 5, 'UI/UX', 'bg-purple-500')}
                 </div>
                 <div>
-                  {renderScoreBar(project.processScore || 0, 5, 'プロセス・取り組み姿勢', 'bg-orange-500')}
-                  {renderScoreBar(project.aiUtilizationScore || 0, 5, 'AI活用', 'bg-pink-500')}
+                  {renderScoreBar(project.processScore || 0, maxVotesPerProject * 5, 'プロセス・取り組み姿勢', 'bg-orange-500')}
+                  {renderScoreBar(project.aiUtilizationScore || 0, maxVotesPerProject * 5, 'AI活用', 'bg-pink-500')}
                 </div>
               </div>
             </div>
