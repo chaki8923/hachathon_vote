@@ -140,7 +140,6 @@ export default function ResultsDisplay({ initialResults }: { initialResults: Pro
                 <div className="text-right">
                   <div className="text-3xl font-bold">
                     {project.totalScore?.toFixed(1) || 0}
-                    <span className="text-lg text-gray-500">/{(maxVotesPerProject * 5 * 5).toFixed(0)}</span>
                   </div>
                   <div className="text-sm text-gray-500">
                     {project.voteCount} {project.voteCount === 1 ? '票' : '票'}
@@ -163,13 +162,13 @@ export default function ResultsDisplay({ initialResults }: { initialResults: Pro
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  {renderScoreBar(project.planningScore || 0, maxVotesPerProject * 5, '企画力', 'bg-blue-500')}
-                  {renderScoreBar(project.technicalScore || 0, maxVotesPerProject * 5, '技術力', 'bg-green-500')}
-                  {renderScoreBar(project.uiUxScore || 0, maxVotesPerProject * 5, 'UI/UX', 'bg-purple-500')}
+                  {renderScoreBar(project.planningScore || 0, Math.max(...results.map(p => p.planningScore || 0), 1), '企画力', 'bg-blue-500')}
+                  {renderScoreBar(project.technicalScore || 0, Math.max(...results.map(p => p.technicalScore || 0), 1), '技術力', 'bg-green-500')}
+                  {renderScoreBar(project.uiUxScore || 0, Math.max(...results.map(p => p.uiUxScore || 0), 1), 'UI/UX', 'bg-purple-500')}
                 </div>
                 <div>
-                  {renderScoreBar(project.processScore || 0, maxVotesPerProject * 5, 'プロセス・取り組み姿勢', 'bg-orange-500')}
-                  {renderScoreBar(project.aiUtilizationScore || 0, maxVotesPerProject * 5, 'AI活用', 'bg-pink-500')}
+                  {renderScoreBar(project.processScore || 0, Math.max(...results.map(p => p.processScore || 0), 1), 'プロセス・取り組み姿勢', 'bg-orange-500')}
+                  {renderScoreBar(project.aiUtilizationScore || 0, Math.max(...results.map(p => p.aiUtilizationScore || 0), 1), 'AI活用', 'bg-pink-500')}
                 </div>
               </div>
             </div>

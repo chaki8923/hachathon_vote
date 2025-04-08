@@ -55,11 +55,6 @@ export async function GET() {
           aiUtilizationScore += vote.aiUtilizationScore;
         });
         
-        planningScore = planningScore / voteCount;
-        technicalScore = technicalScore / voteCount;
-        uiUxScore = uiUxScore / voteCount;
-        processScore = processScore / voteCount;
-        aiUtilizationScore = aiUtilizationScore / voteCount;
       }
       
       const totalScore = planningScore + technicalScore + uiUxScore + processScore + aiUtilizationScore;
